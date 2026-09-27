@@ -1,0 +1,25 @@
+site_name: BCR Chat Router
+site_description: Bureau of Citizen Response — chat routing backend using TypeSafe Jev + rule-based fallback
+repo_url: https://github.com/ianlintner/bcr-chat-router
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: indigo
+  features:
+    - navigation.sections
+    - content.code.copy
+markdown_extensions:
+  - md_in_html
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+nav:
+  - Overview: index.md
+  - Architecture: architecture.md
+  - Routing & privacy: routing.md
+  - Running locally: running.md
+  - Metrics: metrics.md
+  - Roadmap: roadmap.md
