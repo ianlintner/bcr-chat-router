@@ -62,4 +62,6 @@ class Session(BaseModel):
     created_at: float = Field(default_factory=time.time)
     department: Department | None = None
     escalated: bool = False
+    confidence: float | None = None
+    claimed_by: str | None = None
     history: list[ChatMessage] = Field(default_factory=list)

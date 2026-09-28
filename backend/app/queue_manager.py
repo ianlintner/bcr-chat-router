@@ -21,13 +21,35 @@ class QueueManager:
             self._sessions[session_id] = Session(session_id=session_id)
         return self._sessions[session_id]
 
-    def assign(self, session: Session, department: Department, escalated: bool) -> None:
+    def assign(
+        self,
+        session: Session,
+        department: Department,
+        escalated: bool,
+        confidence: float | None = None,
+    ) -> None:
         for dept, members in self._queues.items():
             if session.session_id in members:
                 members.remove(session.session_id)
         session.department = department
         session.escalated = escalated
+        session.confidence = confidence
         self._queues[department].append(session.session_id)
+
+    def claim(self, session_id: str, agent_id: str) -> Session | None:
+        session = self._sessions.get(session_id)
+        if session is None or not session.escalated:
+            return None
+        if session.claimed_by is not None and session.claimed_by != agent_id:
+            raise ValueError("session is already claimed")
+        session.claimed_by = agent_id
+        return session
+
+    def human_sessions(self) -> list[Session]:
+        return [session for session in self._sessions.values() if session.escalated]
+
+    def session(self, session_id: str) -> Session | None:
+        return self._sessions.get(session_id)
 
     def record_message(self, session: Session, message: ChatMessage) -> None:
         session.history.append(message)
