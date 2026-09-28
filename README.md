@@ -28,6 +28,7 @@ backend/app/router.py     RoutingEngine: Jev "choice" classifier + keyword-rule 
 backend/app/queue_manager.py  In-memory department queues + human-agent handoff
 backend/app/models.py     Pydantic message/session/routing models
 backend/app/metrics.py    Prometheus counters/histograms
+backend/tests/            Routing and human-handoff API/WebSocket tests
 ```
 
 Routing decision flow per message:
@@ -42,6 +43,12 @@ Routing decision flow per message:
    regardless of which label won — confidence gates the *routing*, never the escalation.
 4. All routing decisions (label, confidence, source=`jev`/`rule`, latency, cost) are
    exported as Prometheus metrics — no raw message text in metric labels.
+5. The Human Agent Desk polls `GET /queues/human/sessions` for escalated sessions, including
+   the last message and routing confidence. An agent claims one with
+   `POST /queues/human/sessions/{session_id}/claim` (or by connecting to
+   `WS /ws/agent/{session_id}?agent_id=...`). Once claimed, citizen messages bypass routing
+   and are relayed to that agent; agent messages are relayed back over the citizen chat socket.
+   The reference implementation keeps these connections in process memory.
 
 Jev is opt-in: set `TYPESAFE_API_KEY` to enable it. With no key set, the service runs
 entirely on the rule-based fallback (useful for local dev / CI, and honestly labeled in
