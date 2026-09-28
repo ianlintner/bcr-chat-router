@@ -25,7 +25,7 @@ frontend/demo.html        Static demo page hosting the widget
 
 backend/app/main.py       FastAPI app: REST session bootstrap + WebSocket chat endpoint
 backend/app/router.py     RoutingEngine: Jev "choice" classifier + keyword-rule fallback
-backend/app/queue_manager.py  In-memory department queues + human-agent handoff
+backend/app/queue_manager.py  Redis-backed department queues + human-agent handoff
 backend/app/models.py     Pydantic message/session/routing models
 backend/app/metrics.py    Prometheus counters/histograms
 backend/tests/            Routing and human-handoff API/WebSocket tests
@@ -70,9 +70,14 @@ metrics as `source="rule"`).
 cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+# Start Redis locally (for example, with Docker):
+docker run --rm -p 6379:6379 redis:7-alpine
 cp ../.env.example .env   # optional: set TYPESAFE_API_KEY to enable Jev
 uvicorn app.main:app --reload --port 8000
 ```
+
+Queue sessions and department membership are stored in Redis. Set `REDIS_URL` to
+use another Redis instance (default: `redis://localhost:6379/0`).
 
 Open `frontend/demo.html` in a browser (or serve it) — it embeds the widget against
 `ws://localhost:8000/ws/chat`.

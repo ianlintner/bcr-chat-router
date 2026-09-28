@@ -1,18 +1,8 @@
-import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app, human_sessions
+from app.main import app
 from app.models import ChatMessage, Department
 from app.queue_manager import queue_manager
-
-
-@pytest.fixture(autouse=True)
-def clean_queue():
-    queue_manager._sessions.clear()
-    queue_manager._queues.clear()
-    yield
-    queue_manager._sessions.clear()
-    queue_manager._queues.clear()
 
 
 def escalated_session(session_id="human-1"):
