@@ -102,3 +102,5 @@ Early reference implementation. See the GitHub Project board for planned work
 ## License
 
 MIT — see `LICENSE`.
+
+<!-- protections verification 2026-09-28T09:32:05Z -->
